@@ -1,0 +1,82 @@
+# Ignore Visual Studio specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore build results
+bin/
+obj/
+
+# Ignore packages
+packages/
+*.nupkg
+
+# Ignore Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Ignore JetBrains Rider
+.idea/
+*.sln.iml
+
+# Ignore Dotnet Core specific files
+project.lock.json
+project.assets.json
+*.db
+*.bak
+*.sqlite
+
+# Ignore publish output
+publish/
+*.publishproj
+
+# Ignore temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Ignore secrets and configuration
+secrets.json
+appsettings.json
+appsettings.*.json
+
+# Ignore Rider and VS Code IDE settings
+.idea/
+.vscode/
+
+# Ignore test results
+testresults/
+*.trx
+*.coverage
+
+# Ignore Mac and Linux files
+.DS_Store
+*.DS_Store
+
+# Ignore node_modules (if using Node.js with Blazor or similar)
+node_modules/
+
+# Ignore OpenAPI files
+swagger.json
+swagger.yaml
+
+# Ignore compiled TypeScript files
+*.tsbuildinfo
+
+# Ignore Entity Framework Migrations
+Migrations/
+
+# Ignore sensitive information
+.env
+.env.*
+
+# Ignore npm debug file
+npm-debug.log
+
+# Ignore JetBrains Rider specific files
+.idea/
+*.sln.iml
