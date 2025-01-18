@@ -25,7 +25,14 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Restaurante API Grupo C",
-        Version = "v1"
+        Version = "v1",
+        Description = "API para gestão de reservas de restaurante, permitindo operações como criar, atualizar, listar e excluir reservas feita por Asafe, Fardeen , João , Júlio e Miguel.",
+        Contact = new OpenApiContact
+        {
+            Name = "Grupo C",
+            Email = "grupoC@restaurante.com",
+            Url = new Uri("https://www.isep.ipp.pt/")
+        }
     });
 });
 
