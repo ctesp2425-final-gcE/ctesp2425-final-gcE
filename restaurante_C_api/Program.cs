@@ -1,23 +1,37 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using restaurante_C_api.Data;
+using restaurante_C_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Configurar string de conexão diretamente no código
+var connectionString = "Server=localhost;Database=RestauranteDB;User Id=seu_usuario;Password=sua_senha;";
+
+// Registrar o DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Registrar serviços
+builder.Services.AddScoped<IReservaService, ReservaService>();
+
+// Adicionar serviços de controladores
+builder.Services.AddControllers();
+
+// Adicionar serviços para o Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
-    { 
-        Title = "Restaurante API",
-        Version = "v1" 
+    {
+        Title = "Restaurante API Grupo C",
+        Version = "v1"
     });
-
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuração do pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -29,28 +43,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// Configurar endpoints de controladores
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
