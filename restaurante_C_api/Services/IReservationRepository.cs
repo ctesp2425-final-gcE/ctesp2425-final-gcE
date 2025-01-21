@@ -22,7 +22,7 @@ namespace restaurante_C_api.Services
 
         public ReservaService()
         {
-            _reservas = new List<ReservaModel>(); // Substituir por acesso ao banco de dados
+            _reservas = new List<ReservaModel>();
         }
 
         public ReservaModel CriarReserva(ReservaModel reserva)
