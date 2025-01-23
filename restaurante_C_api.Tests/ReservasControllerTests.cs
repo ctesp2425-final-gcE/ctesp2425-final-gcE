@@ -129,6 +129,20 @@ namespace restaurante_C_api.Tests
             Assert.Equal("Já existe uma reserva para esta mesa em um intervalo de 1 hora e 30 minutos.", conflictResult.Value);
         }
 
+        public IActionResult ObterTodasReservas(string filtro, int pagina, int tamanhoPagina)
+        {
+            var reservas = _reservaService.ObterTodasReservas(); // Obtém todas as reservas
+
+            var response = new
+            {
+                TotalRegistros = reservas.Count,
+                Reservas = reservas
+            };
+
+            return Ok(response);
+        }
+
+
         [Fact]
         public void ObterTodasReservas_DeveRetornar200ComListaDeReservas()
         {
@@ -148,11 +162,16 @@ namespace restaurante_C_api.Tests
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
+
+            // Verificar a estrutura do objeto retornado
             var response = okResult.Value as dynamic;
             Assert.NotNull(response);
-            Assert.Equal(2, response.TotalRegistros);
-            Assert.Equal(2, response.Reservas.Count);
+
+            // Testar as propriedades do objeto retornado
+            Assert.Equal(2, (int)response.TotalRegistros);
+            Assert.Equal(2, ((IEnumerable<ReservaModel>)response.Reservas).Count());
         }
+
 
         [Fact]
         public void ObterReservaPorId_DeveRetornar404QuandoNaoEncontrada()
