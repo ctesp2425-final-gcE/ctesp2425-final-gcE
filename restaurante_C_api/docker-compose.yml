@@ -1,0 +1,77 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql
+    ports:
+      - "1440:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "123G3FJJMa."
+      MSSQL_PID: "Evaluation"
+    networks:
+      - bridgeRestaurante
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  # custom_app:
+  #   image: e5a543480414
+  #   container_name: eager_morse
+  #   ports:
+  #     - "8050:8080"
+  #   depends_on:
+  #     - mssql
+  #   networks:
+  #     - bridgeRestaurante
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - portainer_net
+
+  jenkins:
+    build:
+      context: ./
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+    networks:
+      - bridgeRestaurante
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9001:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    networks:
+      - bridgeRestaurante
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+networks:
+  bridgeRestaurante:
+    driver: bridge
+  portainer_net:
+    driver: bridge
+
+volumes:
+  sql_data:
+  portainer_data:
+  jenkins_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:

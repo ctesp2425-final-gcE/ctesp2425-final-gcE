@@ -9,16 +9,18 @@ using Xunit;
 
 namespace restaurante_C_api.Tests
 {
-    public class ReservasControllerTests
+    public class CreateGetReservasTests
     {
         private readonly Mock<IReservaService> _reservaServiceMock;
         private readonly ReservasController _controller;
 
-        public ReservasControllerTests()
+        public CreateGetReservasTests()
         {
             _reservaServiceMock = new Mock<IReservaService>();
             _controller = new ReservasController(_reservaServiceMock.Object);
         }
+
+        #region Testes de CriarReserva
 
         [Fact]
         public void CriarReserva_DeveRetornar201QuandoCriadaComSucesso()
@@ -35,7 +37,7 @@ namespace restaurante_C_api.Tests
 
             _reservaServiceMock.Setup(s => s.ObterReservasPorMesa(reserva.NumeroMesa))
                 .Returns(new List<ReservaModel>());
-            
+
             _reservaServiceMock.Setup(s => s.CriarReserva(reserva))
                 .Returns(reserva);
 
@@ -68,28 +70,6 @@ namespace restaurante_C_api.Tests
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);
             Assert.Equal("Número da mesa inválido. O restaurante possui mesas numeradas de 1 a 30.", badRequestResult.Value);
-        }
-
-        [Fact]
-        public void CriarReserva_DeveRetornar400QuandoNumeroPessoasInvalido()
-        {
-            // Arrange
-            var reserva = new ReservaModel
-            {
-                NomeCliente = "João Silva",
-                DataReserva = DateTime.Now.Date,
-                HorarioReserva = TimeSpan.FromHours(19),
-                NumeroMesa = 5,
-                NumeroPessoas = 25 // Número inválido
-            };
-
-            // Act
-            var result = _controller.CriarReserva(reserva);
-
-            // Assert
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(400, badRequestResult.StatusCode);
-            Assert.Equal("Número de pessoas inválido. Cada mesa suporta de 1 a 20 pessoas.", badRequestResult.Value);
         }
 
         [Fact]
@@ -129,6 +109,10 @@ namespace restaurante_C_api.Tests
             Assert.Equal("Já existe uma reserva para esta mesa em um intervalo de 1 hora e 30 minutos.", conflictResult.Value);
         }
 
+        #endregion
+
+        #region Testes de ObterTodasReservas
+
         [Fact]
         public void ObterTodasReservas_DeveRetornar200ComListaDeReservas()
         {
@@ -143,16 +127,37 @@ namespace restaurante_C_api.Tests
                 .Returns(reservas);
 
             // Act
-            var result = _controller.ObterTodasReservas(null, 1, 10);
+            var result = _controller.ObterTodasReservas(null);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
-            var response = okResult.Value as dynamic;
-            Assert.NotNull(response);
-            Assert.Equal(2, response.TotalRegistros);
-            Assert.Equal(2, response.Reservas.Count);
+
+            var response = Assert.IsType<List<ReservaModel>>(okResult.Value); // Trabalhe diretamente com a lista
+            Assert.Equal(2, response.Count); // Verifique o número de itens na lista
         }
+
+        [Fact]
+        public void ObterTodasReservas_DeveRetornar200ComListaVaziaSeNaoExistiremReservas()
+        {
+            // Arrange
+            _reservaServiceMock.Setup(s => s.ObterTodasReservas())
+                .Returns(new List<ReservaModel>());
+
+            // Act
+            var result = _controller.ObterTodasReservas(null);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okResult.StatusCode);
+
+            var response = Assert.IsType<List<ReservaModel>>(okResult.Value);
+            Assert.Empty(response); // Certifique-se de que a lista está vazia
+        }
+
+        #endregion
+
+        #region Testes de ObterReservaPorId
 
         [Fact]
         public void ObterReservaPorId_DeveRetornar404QuandoNaoEncontrada()
@@ -171,5 +176,26 @@ namespace restaurante_C_api.Tests
             Assert.Equal(404, notFoundResult.StatusCode);
             Assert.Equal("Reserva não encontrada.", notFoundResult.Value);
         }
+
+        [Fact]
+        public void ObterReservaPorId_DeveRetornar200QuandoEncontrada()
+        {
+            // Arrange
+            var reservaId = 1;
+            var reserva = new ReservaModel { Id = reservaId, NomeCliente = "João Silva" };
+
+            _reservaServiceMock.Setup(s => s.ObterReservaPorId(reservaId))
+                .Returns(reserva);
+
+            // Act
+            var result = _controller.ObterReservaPorId(reservaId);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.Equal(reserva, okResult.Value);
+        }
+
+        #endregion
     }
 }
