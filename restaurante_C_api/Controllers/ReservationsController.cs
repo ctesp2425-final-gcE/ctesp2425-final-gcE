@@ -69,13 +69,8 @@ namespace restaurante_C_api.Controllers
         [SwaggerOperation(Summary = "Lista todas as reservas", Description = "Obtém todas as reservas com suporte a paginação e filtros.")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ObterTodasReservas([FromQuery] DateTime? data, [FromQuery] int pagina = 1, [FromQuery] int tamanho = 10)
+        public IActionResult ObterTodasReservas([FromQuery] DateTime? data)
         {
-            if (pagina <= 0 || tamanho <= 0)
-            {
-                return BadRequest("Página e tamanho devem ser maiores que zero.");
-            }
-
             var query = _reservaService.ObterTodasReservas().AsQueryable();
 
             if (data.HasValue)
@@ -83,22 +78,9 @@ namespace restaurante_C_api.Controllers
                 query = query.Where(r => r.DataReserva.Date == data.Value.Date);
             }
 
-            var totalRegistros = query.Count();
-            var reservasPaginadas = query
-                .Skip((pagina - 1) * tamanho)
-                .Take(tamanho)
-                .ToList();
+            var reservas = query.ToList();
 
-            var resultado = new
-            {
-                TotalRegistros = totalRegistros,
-                PaginaAtual = pagina,
-                TamanhoPagina = tamanho,
-                TotalPaginas = (int)Math.Ceiling(totalRegistros / (double)tamanho),
-                Reservas = reservasPaginadas
-            };
-
-            return Ok(resultado);
+            return Ok(reservas);
         }
 
         // Endpoint para obter detalhes de uma reserva específica
