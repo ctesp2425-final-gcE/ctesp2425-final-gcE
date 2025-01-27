@@ -6,7 +6,7 @@ using restaurante_C_api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar string de conexão diretamente no código
-var connectionString = "Server=192.168.50.4;Database=RestauranteDB;User Id=gc;Password=123G3FJJMA.;";
+var connectionString = "Server=sql,1440;Database=RestauranteDB;User Id=sa;Password=123G3FJJMA.;Encrypt=True;TrustServerCertificate=True;";
 
 // Registrar o DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
