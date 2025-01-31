@@ -16,11 +16,11 @@ namespace restaurante_C_api.Models
         public string NomeCliente { get; set; }
 
         [Required(ErrorMessage = "A data da reserva é obrigatória.")]
-        [DataType(DataType.Date, ErrorMessage = "A data da reserva deve estar em um formato válido.")]
+        [DataType(DataType.Date, ErrorMessage = "A data da reserva deve estar num formato válido.")]
         public DateTime DataReserva { get; set; }
 
         [Required(ErrorMessage = "O horário da reserva é obrigatório.")]
-        [DataType(DataType.Time, ErrorMessage = "O horário da reserva deve estar em um formato válido.")]
+        [DataType(DataType.Time, ErrorMessage = "O horário da reserva deve estar num formato válido.")]
         public TimeSpan HorarioReserva { get; set; }
 
         [Required(ErrorMessage = "O número da mesa é obrigatório.")]
@@ -32,7 +32,7 @@ namespace restaurante_C_api.Models
         public int NumeroPessoas { get; set; }
 
         [Required(ErrorMessage = "A data de criação é obrigatória.")]
-        [DataType(DataType.DateTime, ErrorMessage = "A data de criação deve estar em um formato válido.")]
+        [DataType(DataType.DateTime, ErrorMessage = "A data de criação deve estar num formato válido.")]
         public DateTime DataCriacao { get; set; } = DateTime.Now;
     }
 }

@@ -23,17 +23,14 @@ namespace restaurante_C_api.Tests
         [Fact]
         public void AtualizarReserva_DeveRetornar200QuandoAtualizadaComSucesso()
         {
-            // Arrange
             var reservaId = 1;
             var reserva = new ReservaModel { Id = reservaId, NomeCliente = "João Silva" };
 
             _reservaServiceMock.Setup(s => s.AtualizarReserva(reserva))
                 .Returns(reserva);
 
-            // Act
-            var result = _controller.AtualizarReserva(reservaId, reserva);
+            var result = _controller.AtualizarReserva(reservaId, reserva); // Ação
 
-            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
             Assert.Equal(reserva, okResult.Value);
@@ -42,10 +39,8 @@ namespace restaurante_C_api.Tests
         [Fact]
         public void AtualizarReserva_DeveRetornar400QuandoDadosNulos()
         {
-            // Act
-            var result = _controller.AtualizarReserva(1, null);
+            var result = _controller.AtualizarReserva(1, null); // Ação
 
-            // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);
             Assert.Equal("Dados da reserva inválidos.", badRequestResult.Value);
@@ -54,13 +49,10 @@ namespace restaurante_C_api.Tests
         [Fact]
         public void AtualizarReserva_DeveRetornar400QuandoIdNaoCorresponde()
         {
-            // Arrange
             var reserva = new ReservaModel { Id = 2, NomeCliente = "João Silva" };
 
-            // Act
-            var result = _controller.AtualizarReserva(1, reserva);
+            var result = _controller.AtualizarReserva(1, reserva); // Ação
 
-            // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);
             Assert.Equal("Dados da reserva inválidos.", badRequestResult.Value);
@@ -69,16 +61,13 @@ namespace restaurante_C_api.Tests
         [Fact]
         public void AtualizarReserva_DeveRetornar404QuandoNaoEncontrada()
         {
-            // Arrange
             var reserva = new ReservaModel { Id = 1, NomeCliente = "João Silva" };
 
             _reservaServiceMock.Setup(s => s.AtualizarReserva(reserva))
                 .Returns((ReservaModel)null);
 
-            // Act
-            var result = _controller.AtualizarReserva(1, reserva);
+            var result = _controller.AtualizarReserva(1, reserva); // Ação
 
-            // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal(404, notFoundResult.StatusCode);
             Assert.Equal("Reserva não encontrada para atualização.", notFoundResult.Value);
