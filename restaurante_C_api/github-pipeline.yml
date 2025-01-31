@@ -1,0 +1,18 @@
+image: mcr.microsoft.com/dotnet/core/sdk:8.0
+
+pipelines:
+  default:
+    - step:
+        name: Build and Publish
+        caches:
+          - dotnetcore
+        script:
+          - echo "Pipeline a iniciar..."
+          - echo "Checkout do código..."
+          - git checkout
+          - echo "A restaurar dependências..."
+          - dotnet restore  
+          - echo "A Compilar..."
+          - dotnet build    
+          - echo "A publicar aplicação..."
+          - dotnet publish --configuration Release --output ./publish  
