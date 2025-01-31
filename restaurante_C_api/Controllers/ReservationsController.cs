@@ -32,26 +32,24 @@ namespace restaurante_C_api.Controllers
                 return BadRequest("Dados da reserva inválidos.");
             }
 
-            // Verificar se o número da mesa é válido
             if (reserva.NumeroMesa < 1 || reserva.NumeroMesa > 30)
             {
                 return BadRequest("Número da mesa inválido. O restaurante possui mesas numeradas de 1 a 30.");
             }
 
-            // Verificar se o número de pessoas é válido
             if (reserva.NumeroPessoas < 1 || reserva.NumeroPessoas > 20)
             {
                 return BadRequest("Número de pessoas inválido. Cada mesa suporta de 1 a 20 pessoas.");
             }
 
-            // Verificar conflitos de horário
+            // Verifica conflitos de horário
             var reservasExistentes = _reservaService.ObterReservasPorMesa(reserva.NumeroMesa);
 
             if (reservasExistentes.Any(r =>
                 r.DataReserva == reserva.DataReserva &&
                 Math.Abs((r.HorarioReserva - reserva.HorarioReserva).TotalMinutes) < 90))
             {
-                return Conflict("Já existe uma reserva para esta mesa em um intervalo de 1 hora e 30 minutos.");
+                return Conflict("Já existe uma reserva para esta mesa num intervalo de 1 hora e 30 minutos.");
             }
 
             var novaReserva = _reservaService.CriarReserva(reserva);
@@ -60,7 +58,6 @@ namespace restaurante_C_api.Controllers
             {
                 return CreatedAtAction(nameof(ObterReservaPorId), new { id = novaReserva.Id }, novaReserva);
             }
-
             return StatusCode(500, "Ocorreu um erro ao criar a reserva.");
         }
 
@@ -77,9 +74,7 @@ namespace restaurante_C_api.Controllers
             {
                 query = query.Where(r => r.DataReserva.Date == data.Value.Date);
             }
-
             var reservas = query.ToList();
-
             return Ok(reservas);
         }
 
@@ -96,7 +91,6 @@ namespace restaurante_C_api.Controllers
             {
                 return NotFound("Reserva não encontrada.");
             }
-
             return Ok(reserva);
         }
 
@@ -119,7 +113,6 @@ namespace restaurante_C_api.Controllers
             {
                 return NotFound("Reserva não encontrada para atualização.");
             }
-
             return Ok(reservaAtualizada);
         }
 
@@ -131,12 +124,10 @@ namespace restaurante_C_api.Controllers
         public IActionResult CancelarReserva(int id)
         {
             var sucesso = _reservaService.CancelarReserva(id);
-
             if (!sucesso)
             {
                 return NotFound("Reserva não encontrada para cancelamento.");
             }
-
             return NoContent();
         }
 

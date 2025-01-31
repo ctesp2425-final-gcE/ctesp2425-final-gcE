@@ -23,32 +23,26 @@ namespace restaurante_C_api.Tests
         [Fact]
         public void CancelarReserva_DeveRetornar204QuandoCanceladaComSucesso()
         {
-            // Arrange
             var reservaId = 1;
 
             _reservaServiceMock.Setup(s => s.CancelarReserva(reservaId))
                 .Returns(true);
 
-            // Act
-            var result = _controller.CancelarReserva(reservaId);
+            var result = _controller.CancelarReserva(reservaId); // Ação
 
-            // Assert
             Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
         public void CancelarReserva_DeveRetornar404QuandoNaoEncontrada()
         {
-            // Arrange
             var reservaId = 1;
 
             _reservaServiceMock.Setup(s => s.CancelarReserva(reservaId))
                 .Returns(false);
 
-            // Act
-            var result = _controller.CancelarReserva(reservaId);
+            var result = _controller.CancelarReserva(reservaId); // Ação
 
-            // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal(404, notFoundResult.StatusCode);
             Assert.Equal("Reserva não encontrada para cancelamento.", notFoundResult.Value);

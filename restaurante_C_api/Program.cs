@@ -5,20 +5,17 @@ using restaurante_C_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar string de conexão diretamente no código
 var connectionString = "Server=sql,1440;Database=RestauranteDB;User Id=sa;Password=123G3FJJMA.;Encrypt=True;TrustServerCertificate=True;";
 
-// Registrar o DbContext
+// Registo do DbContext e de Serviços
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Registrar serviços
 builder.Services.AddScoped<IReservaService, ReservaService>();
 
-// Adicionar serviços de controladores
+// Serviços de controladores e Swagger
 builder.Services.AddControllers();
 
-// Adicionar serviços para o Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -38,7 +35,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configuração do pipeline HTTP
+// Config pipeline http
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -50,7 +47,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Configurar endpoints de controladores
 app.MapControllers();
 
 app.Run();
