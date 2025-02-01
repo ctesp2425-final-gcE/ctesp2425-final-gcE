@@ -6,7 +6,7 @@ services:
       - "1440:1433"
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "123G3FJJMa."
+      MSSQL_SA_PASSWORD: "123G3FJJMA."
       MSSQL_PID: "Evaluation"
     networks:
       - bridgeRestaurante

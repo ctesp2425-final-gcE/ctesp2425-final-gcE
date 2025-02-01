@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using restaurante_C_api.Data;
 using restaurante_C_api.Models;
 
 namespace restaurante_C_api.Services
@@ -18,49 +20,46 @@ namespace restaurante_C_api.Services
 
     public class ReservaService : IReservaService
     {
-        private readonly List<ReservaModel> _reservas;
+        private readonly AppDbContext _context;
 
-        public ReservaService()
+        public ReservaService(AppDbContext context)
         {
-            _reservas = new List<ReservaModel>();
+            _context = context;
         }
 
         public ReservaModel CriarReserva(ReservaModel reserva)
         {
-            reserva.Id = _reservas.Count > 0 ? _reservas.Max(r => r.Id) + 1 : 1;
             reserva.DataCriacao = DateTime.Now;
-            _reservas.Add(reserva);
+            _context.Reservas.Add(reserva);
+            _context.SaveChanges();
             return reserva;
         }
 
         public IEnumerable<ReservaModel> ObterTodasReservas()
         {
-            return _reservas;
+            return _context.Reservas.AsNoTracking().ToList();
         }
 
         public ReservaModel ObterReservaPorId(int id)
         {
-            return _reservas.FirstOrDefault(r => r.Id == id);
+            return _context.Reservas.AsNoTracking().FirstOrDefault(r => r.Id == id);
         }
 
         public IEnumerable<ReservaModel> ObterReservasPorMesa(int numeroMesa)
         {
-            return _reservas.Where(r => r.NumeroMesa == numeroMesa);
+            return _context.Reservas.Where(r => r.NumeroMesa == numeroMesa).ToList();
         }
 
         public IEnumerable<ReservaModel> ObterReservasPorData(DateTime data)
         {
-            return _reservas.Where(r => r.DataReserva.Date == data.Date);
+            return _context.Reservas.Where(r => r.DataReserva.Date == data.Date).ToList();
         }
 
         public ReservaModel AtualizarReserva(ReservaModel reserva)
         {
-            var reservaExistente = _reservas.FirstOrDefault(r => r.Id == reserva.Id);
-
+            var reservaExistente = _context.Reservas.Find(reserva.Id);
             if (reservaExistente == null)
-            {
                 return null;
-            }
 
             reservaExistente.NomeCliente = reserva.NomeCliente;
             reservaExistente.DataReserva = reserva.DataReserva;
@@ -68,19 +67,18 @@ namespace restaurante_C_api.Services
             reservaExistente.NumeroMesa = reserva.NumeroMesa;
             reservaExistente.NumeroPessoas = reserva.NumeroPessoas;
 
+            _context.SaveChanges();
             return reservaExistente;
         }
 
         public bool CancelarReserva(int id)
         {
-            var reserva = _reservas.FirstOrDefault(r => r.Id == id);
-
+            var reserva = _context.Reservas.Find(id);
             if (reserva == null)
-            {
                 return false;
-            }
 
-            _reservas.Remove(reserva);
+            _context.Reservas.Remove(reserva);
+            _context.SaveChanges();
             return true;
         }
     }
